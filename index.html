@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Troll Ses</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         body {
             margin: 0;
@@ -11,11 +12,15 @@
             justify-content: center;
             align-items: center;
             background-color: black;
+            touch-action: manipulation; /* dokunma hareketlerini kontrol eder */
+        }
+        audio {
+            width: 100%;
         }
     </style>
 </head>
 <body>
-    <audio id="trollAudio" autoplay loop>
+    <audio id="trollAudio" autoplay loop muted>
         <source src="yozgat.mp3" type="audio/mp3">
         Tarayıcınız audio etiketini desteklemiyor.
     </audio>
@@ -23,11 +28,23 @@
     <script>
         const audio = document.getElementById('trollAudio');
         audio.volume = 1; // başlangıçta maksimum ses olmasa da tıklama ile açacağız
+
+        // Sayfanın herhangi bir yerine tıklayınca sesi aç
         document.body.addEventListener('click', function() {
             audio.muted = false;
-            audio.volume = 1; // tıklama ile tam ses
+            audio.volume = 1; // tam ses
             audio.play();
-        }, { once: true }); // sadece ilk tıklamada çalışır
+        });
+
+        // Çift tıklama zoomunu engelle
+        let lastTouch = 0;
+        document.body.addEventListener('touchend', function(e) {
+            const now = (new Date()).getTime();
+            if (now - lastTouch <= 300) { // 300ms içinde ikinci dokunma olursa
+                e.preventDefault(); // çift dokunmayı iptal et
+            }
+            lastTouch = now;
+        }, { passive: false });
     </script>
 </body>
 </html>
