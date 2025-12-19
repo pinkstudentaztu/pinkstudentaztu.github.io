@@ -1,11 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <title>pinkstudentaztu</title>
+    <meta charset="UTF-8">
+    <title>Troll Ses</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: black;
+        }
+    </style>
 </head>
 <body>
-  <h1>Site works 🎉</h1>
-  <p>GitHub Pages + custom domain</p>
+    <audio id="trollAudio" autoplay loop>
+        <source src="yozgat.mp3" type="audio/mp3">
+        Tarayıcınız audio etiketini desteklemiyor.
+    </audio>
+
+    <script>
+        const audio = document.getElementById('trollAudio');
+        audio.volume = 1; // başlangıçta maksimum ses olmasa da tıklama ile açacağız
+        document.body.addEventListener('click', function() {
+            audio.muted = false;
+            audio.volume = 1; // tıklama ile tam ses
+            audio.play();
+        }, { once: true }); // sadece ilk tıklamada çalışır
+    </script>
 </body>
 </html>
