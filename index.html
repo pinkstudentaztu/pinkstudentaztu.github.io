@@ -8,43 +8,42 @@
         body {
             margin: 0;
             height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: black;
-            touch-action: manipulation; /* dokunma hareketlerini kontrol eder */
-        }
-        audio {
-            width: 100%;
+            background: black;
+            touch-action: manipulation;
         }
     </style>
 </head>
 <body>
-    <audio id="trollAudio" autoplay loop muted>
-        <source src="yozgat.mp3" type="audio/mp3">
-        Tarayıcınız audio etiketini desteklemiyor.
-    </audio>
 
-    <script>
-        const audio = document.getElementById('trollAudio');
-        audio.volume = 1; // başlangıçta maksimum ses olmasa da tıklama ile açacağız
+<audio id="trollAudio" autoplay loop muted>
+    <source src="yozgat.mp3" type="audio/mp3">
+</audio>
 
-        // Sayfanın herhangi bir yerine tıklayınca sesi aç
-        document.body.addEventListener('click', function() {
-            audio.muted = false;
-            audio.volume = 1; // tam ses
-            audio.play();
-        });
+<script>
+    const audio = document.getElementById("trollAudio");
 
-        // Çift tıklama zoomunu engelle
-        let lastTouch = 0;
-        document.body.addEventListener('touchend', function(e) {
-            const now = (new Date()).getTime();
-            if (now - lastTouch <= 300) { // 300ms içinde ikinci dokunma olursa
-                e.preventDefault(); // çift dokunmayı iptal et
-            }
-            lastTouch = now;
-        }, { passive: false });
-    </script>
+    function goFullScreen() {
+        const el = document.documentElement;
+        if (el.requestFullscreen) el.requestFullscreen();
+        else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+        else if (el.msRequestFullscreen) el.msRequestFullscreen();
+    }
+
+    document.body.addEventListener("click", () => {
+        audio.muted = false;
+        audio.volume = 1;
+        audio.play();
+        goFullScreen();
+    });
+
+    // çift tıklama zoom engelle
+    let lastTouch = 0;
+    document.body.addEventListener("touchend", e => {
+        const now = Date.now();
+        if (now - lastTouch < 300) e.preventDefault();
+        lastTouch = now;
+    }, { passive: false });
+</script>
+
 </body>
 </html>
