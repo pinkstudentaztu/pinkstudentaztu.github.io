@@ -1,49 +1,116 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <title>Troll Ses</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        body {
-            margin: 0;
-            height: 100vh;
-            background: black;
-            touch-action: manipulation;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Paylaşım Sitesi</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+      display: flex;
+      justify-content: center;
+      padding: 40px;
+    }
+    .container {
+      width: 100%;
+      max-width: 500px;
+      background: #020617;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+    h1 { text-align: center; margin-bottom: 20px; }
+    input, textarea, button {
+      width: 100%;
+      margin-bottom: 12px;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 14px;
+    }
+    input, textarea {
+      background: #020617;
+      color: #e5e7eb;
+      border: 1px solid #334155;
+    }
+    button {
+      background: #2563eb;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover { background: #1d4ed8; }
+    .post {
+      margin-top: 20px;
+      padding: 12px;
+      background: #020617;
+      border: 1px solid #334155;
+      border-radius: 8px;
+    }
+    .post a { color: #60a5fa; text-decoration: none; }
+  </style>
 </head>
 <body>
+  <div class="container">
+    <h1>Yeni Paylaşım</h1>
 
-<audio id="trollAudio" autoplay loop muted>
-    <source src="yozgat.mp3" type="audio/mp3">
-</audio>
+    <input type="text" id="nickname" placeholder="Nickname">
+    <input type="text" id="link" placeholder="Link (https://...)" >
+    <textarea id="description" placeholder="Açıklama"></textarea>
+    <button onclick="addPost()">Submit</button>
 
-<script>
-    const audio = document.getElementById("trollAudio");
+    <div id="posts"></div>
+  </div>
 
-    function goFullScreen() {
-        const el = document.documentElement;
-        if (el.requestFullscreen) el.requestFullscreen();
-        else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-        else if (el.msRequestFullscreen) el.msRequestFullscreen();
+  <script>
+    const STORAGE_KEY = 'posts_data';
+
+    function loadPosts() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return;
+      const posts = JSON.parse(saved);
+      posts.forEach(p => renderPost(p));
     }
 
-    document.body.addEventListener("click", () => {
-        audio.muted = false;
-        audio.volume = 1;
-        audio.play();
-        goFullScreen();
-    });
+    function savePost(post) {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      const posts = saved ? JSON.parse(saved) : [];
+      posts.unshift(post);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+    }
 
-    // çift tıklama zoom engelle
-    let lastTouch = 0;
-    document.body.addEventListener("touchend", e => {
-        const now = Date.now();
-        if (now - lastTouch < 300) e.preventDefault();
-        lastTouch = now;
-    }, { passive: false });
-</script>
+    function renderPost({ nickname, link, description }) {
+      const postDiv = document.createElement('div');
+      postDiv.className = 'post';
+      postDiv.innerHTML = `
+        <strong>${nickname}</strong><br>
+        <p>${description}</p>
+        <a href="${link}" target="_blank">${link}</a>
+      `;
+      document.getElementById('posts').appendChild(postDiv);
+    }
 
+    function addPost() {
+      const nickname = document.getElementById('nickname').value.trim();
+      const link = document.getElementById('link').value.trim();
+      const description = document.getElementById('description').value.trim();
+
+      if (!nickname || !link || !description) {
+        alert('Tüm alanları doldur');
+        return;
+      }
+
+      const post = { nickname, link, description };
+      savePost(post);
+      renderPost(post);
+
+      document.getElementById('nickname').value = '';
+      document.getElementById('link').value = '';
+      document.getElementById('description').value = '';
+    }
+
+    loadPosts();
+  </script>
 </body>
 </html>
